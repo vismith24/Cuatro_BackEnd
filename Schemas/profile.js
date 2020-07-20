@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-var oauthSchema = new mongoose.Schema({
+var profileSchema = new mongoose.Schema({
     picture: {
         type: String,
     },
@@ -10,5 +10,5 @@ var oauthSchema = new mongoose.Schema({
     }
 })
 
-const Oauth = mongoose.model("Oauth", oauthSchema);
-module.exports = Oauth;
+const Profile = mongoose.model("Profile", profileSchema);
+module.exports = Profile;
