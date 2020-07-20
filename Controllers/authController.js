@@ -49,7 +49,7 @@ exports.login = async (req, res) => {
             res.status(500).end();
             throw err;
         }
-        if (result.length > 0) {
+        if (result !== null) {
             if (bcrypt.compareSync(password, result.password)) {
                 var token = jwt.sign(
                     JSON.parse(
@@ -59,7 +59,7 @@ exports.login = async (req, res) => {
                         expiresIn: 365 * 24 * 60 * 60 * 1000
                     }
                 );
-                res.jso({
+                res.json({
                     JWT: "JWT " + token,
                 });
             }
@@ -77,12 +77,12 @@ exports.register = async (req, res) => {
     var { email, username, password } = req.body;
     var salt = bcrypt.genSaltSync(10);
     var hash = bcrypt.hashSync(password, salt);
-    await auth.findOne({email: email}, async (err, result) => {
+    await authModel.findOne({email: email}, async (err, result) => {
         if (err) {
             res.status(500).end();
             throw err;
         }
-        if (result.length > 0) {
+        if (result !== null) {
             var token = jwt.sign(
                 JSON.parse(
                     JSON.stringify({ email })),
@@ -154,7 +154,7 @@ exports.google = async (req, res, next) => {
               res.status(500).end();
               throw err;
           }
-          if (result.length > 0) {
+          if (result !== null) {
               var token = jwt.sign(
                   JSON.parse(
                       JSON.stringify({ email })),
