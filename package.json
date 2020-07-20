@@ -19,6 +19,7 @@
     "cors": "^2.8.5",
     "express": "^4.17.1",
     "http-errors": "^1.8.0",
+    "jade": "^1.11.0",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.9.25",
     "morgan": "^1.10.0",
