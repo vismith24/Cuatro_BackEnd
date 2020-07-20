@@ -1,3 +1,4 @@
+var createError = require("http-errors");
 const express = require('express');
 const cors = require("cors");
 const path = require("path");
@@ -8,6 +9,7 @@ const mongoose = require('mongoose');
 const connectionString = 'mongodb+srv://cuatro:cuatro-admin@cuatro.k6i2p.mongodb.net/CUATRO?retryWrites=true&w=majority';   // Connection String for MongoDB Atlas
 var indexRoutes = require("./Routers/index");
 var authRoutes = require("./Routers/auth");
+var userRoutes = require("./Routers/users");
 
 /*
 mongoose.connection.on('connected', function() {
@@ -61,11 +63,12 @@ app.use(express.urlencoded({ extended: false }));
 
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
-
+/*
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
 next(createError(404));
 });
+*/
 
 // error handler
 app.use(function(err, req, res, next) {
@@ -77,7 +80,9 @@ res.locals.error = req.app.get("env") === "development" ? err : {};
 res.status(err.status || 500);
 res.render("error");
 }); 
+
 app.use('/', indexRoutes);
-app.use('/auth', authRoutes);
+app.use('/users/', userRoutes);
+app.use('/auth/', authRoutes);
 
 module.exports = app;
