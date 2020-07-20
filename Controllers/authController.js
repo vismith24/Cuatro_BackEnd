@@ -1,4 +1,3 @@
-var authService = require('../Services/authService');
 const fetch = require("node-fetch");
 var request = require("request");
 const jwt = require("jsonwebtoken");
@@ -15,6 +14,9 @@ var smtpTransport = nodemailer.createTransport({
     pass: "cuatroinc123",
   },
 });
+var authModel = require('../Schemas/auth');
+var oauthModel = require('../Schemas/oauth');
+var profileModel = require('../Schemas/profile');
 
 exports.index = (req, res, next) => {
     res.send("Respond with a resource");
@@ -47,8 +49,8 @@ exports.login = async (req, res) => {
             res.status(500).end();
             throw err;
         }
-        if (results.length > 0) {
-            if (bcrypt.compareSync(password, results.password)) {
+        if (result.length > 0) {
+            if (bcrypt.compareSync(password, result.password)) {
                 var token = jwt.sign(
                     JSON.parse(
                         JSON.stringify({ email: result.email })),
