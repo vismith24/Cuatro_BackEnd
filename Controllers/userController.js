@@ -1,11 +1,12 @@
-var authModel = require('../Schemas/auth');
+//var authModel = require('../Schemas/auth');
+var profileModel = require('../Schemas/profile');
 
 exports.get_username = async (req, res) => {
     if (
         !(
           req.query.username &&
           req.query.username.length > 3 &&
-          /^[a-zA-Z]+$/.test(req.query.username)
+          /^[a-zA-Z0-9._]+$/.test(req.query.username)
         )
       ) {
         res.json({
@@ -13,7 +14,7 @@ exports.get_username = async (req, res) => {
         });
         return;
       }
-      await authModel.findOne({username: req.query.username}, (err, result) => {
+      await profileModel.findOne({username: req.query.username}, (err, result) => {
           if (err) {
               console.log(err);
               res.status(500).end();
@@ -48,7 +49,7 @@ exports.get_email = async (req, res) => {
         });
         return;
       }
-      await authModel.findOne({ email: req.query.email }, (err, result) => {
+      await profileModel.findOne({ email: req.query.email }, (err, result) => {
           if (err) {
               res.status(500).end();
               throw err;
