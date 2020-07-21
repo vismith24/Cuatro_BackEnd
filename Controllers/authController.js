@@ -96,7 +96,14 @@ exports.register = async (req, res) => {
             });
         }
         else {
+            var Profile = new profileModel({email: email, username});
             var User = new authModel({email: email, password: hash, username: username});
+            await Profile.save( (err) => {
+                if (err) {
+                    res.status(500).end();
+                    throw err;
+                }
+            })
             await User.save( (err) => {
                 if (err) {
                     res.status(500).end();
@@ -144,10 +151,12 @@ exports.google = async (req, res, next) => {
     .then(async (json) => {
       var { email, picture } = json;
       var id = json.sub;
+      var username = email.split('@')[0];
       console.log({
         email,
         id,
         picture,
+        username
       });
       await authModel.findOne({email: email}, async (err, result) => {
           if (err) {
@@ -169,13 +178,13 @@ exports.google = async (req, res, next) => {
           }
           else {
               var Oauth = new oauthModel({provider: "Google", providerID: id, email: email});
-              await OAuth.save( (error) => {
+              await Oauth.save( (error) => {
                   if (error) {
                       res.status(500).end();
                       throw err;
                   } 
               })
-              var Profile = new profileModel({picture: picture, email: email});
+              var Profile = new profileModel({picture: picture, email: email, username: username});
               await Profile.save( (error) => {
                   if (error) {
                       res.status(500).end();
