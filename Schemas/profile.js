@@ -12,6 +12,13 @@ var profileSchema = new mongoose.Schema({
     username: {
         type: String,
         unique: true
+    },
+    isVerified: {
+        type: Boolean,
+        default: true
+    },
+    password: {
+        type: String
     }
 })
 

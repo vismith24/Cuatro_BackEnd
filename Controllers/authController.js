@@ -25,7 +25,7 @@ exports.index = (req, res, next) => {
 exports.verify = async (req, res) => {
     const { id } = req.query;
     const { email } = jwt.verify(id, "nodeauthsecret");
-    await authModel.findOneAndUpdate({email: email}, {isVerified: true}, (err, result) => {
+    await profileModel.findOneAndUpdate({email: email}, {isVerified: true}, (err, result) => {
         if (err) {
             res.status(500).end();
             throw err;
@@ -44,7 +44,7 @@ exports.verify = async (req, res) => {
 
 exports.login = async (req, res) => {
     const { username, password } = req.body;
-    await authModel.findOne({username: username, isVerified: true}, (err, result) => {
+    await profileModel.findOne({username: username, isVerified: true}, (err, result) => {
         if (err) {
             res.status(500).end();
             throw err;
@@ -64,10 +64,12 @@ exports.login = async (req, res) => {
                 });
             }
             else {
+                console.log("password");
                 res.status(401).end();
             }
         }
         else {
+            console.log("not exist");
             results.status(401).end();
         }
     });
@@ -77,7 +79,7 @@ exports.register = async (req, res) => {
     var { email, username, password } = req.body;
     var salt = bcrypt.genSaltSync(10);
     var hash = bcrypt.hashSync(password, salt);
-    await authModel.findOne({email: email}, async (err, result) => {
+    await profileModel.findOne({email: email}, async (err, result) => {
         if (err) {
             res.status(500).end();
             throw err;
@@ -96,19 +98,20 @@ exports.register = async (req, res) => {
             });
         }
         else {
-            var Profile = new profileModel({email: email, username});
-            var User = new authModel({email: email, password: hash, username: username});
+            var Profile = new profileModel({email: email, password: hash, username: username, isVerified: false});
+            //var User = new authModel({email: email, password: hash, username: username});
             await Profile.save( (err) => {
                 if (err) {
                     res.status(500).end();
                     throw err;
                 }
+            /*
             })
             await User.save( (err) => {
                 if (err) {
                     res.status(500).end();
                     throw err;
-                }
+                }*/
                 var token = jwt.sign(
                     JSON.parse(
                         JSON.stringify({ email })),
@@ -152,13 +155,16 @@ exports.google = async (req, res, next) => {
       var { email, picture } = json;
       var id = json.sub;
       var username = email.split('@')[0];
+      var password = "G00gle@uth";
+      var salt = bcrypt.genSaltSync(10);
+      var hash = bcrypt.hashSync(password, salt);
       console.log({
         email,
         id,
         picture,
         username
       });
-      await authModel.findOne({email: email}, async (err, result) => {
+      await profileModel.findOne({email: email}, async (err, result) => {
           if (err) {
               res.status(500).end();
               throw err;
@@ -184,7 +190,7 @@ exports.google = async (req, res, next) => {
                       throw err;
                   } 
               })
-              var Profile = new profileModel({picture: picture, email: email, username: username});
+              var Profile = new profileModel({picture: picture, email: email, username: username, password: hash});
               await Profile.save( (error) => {
                   if (error) {
                       res.status(500).end();
