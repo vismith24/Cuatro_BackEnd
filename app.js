@@ -10,6 +10,7 @@ const connectionString = 'mongodb+srv://cuatro:cuatro-admin@cuatro.k6i2p.mongodb
 var indexRoutes = require("./Routers/index");
 var authRoutes = require("./Routers/auth");
 var userRoutes = require("./Routers/users");
+var orderRoutes = require("./Routers/order");
 
 /*
 mongoose.connection.on('connected', function() {
@@ -84,5 +85,6 @@ res.render("error");
 app.use('/', indexRoutes);
 app.use('/users/', userRoutes);
 app.use('/auth/', authRoutes);
+app.use('/order/', orderRoutes);
 
 module.exports = app;

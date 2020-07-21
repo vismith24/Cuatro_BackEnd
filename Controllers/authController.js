@@ -168,7 +168,7 @@ exports.google = async (req, res, next) => {
               });
           }
           else {
-              var Oauth = new oauthModel({provider: "Google", providerID: id, email: email});
+              var OAuth = new oauthModel({provider: "Google", providerID: id, email: email});
               await OAuth.save( (error) => {
                   if (error) {
                       res.status(500).end();
