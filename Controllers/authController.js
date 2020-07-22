@@ -2,6 +2,7 @@ const fetch = require("node-fetch");
 var request = require("request");
 const jwt = require("jsonwebtoken");
 const passport = require("passport");
+const config = require('../config');
 var bcrypt = require("bcryptjs");
 var nodemailer = require("nodemailer");
 var smtpTransport = nodemailer.createTransport({
@@ -10,8 +11,8 @@ var smtpTransport = nodemailer.createTransport({
   secure: false,
   requireTLS: true,
   auth: {
-    user: "cuatrotechinc@gmail.com",
-    pass: "cuatroinc123",
+    user: config.CUATRO_MAIL_ID,
+    pass: config.CUATRO_MAIL_PASSWORD,
   },
 });
 var oauthModel = require('../Schemas/oauth');

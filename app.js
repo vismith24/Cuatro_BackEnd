@@ -4,9 +4,10 @@ const cors = require("cors");
 const path = require("path");
 const logger = require("morgan");
 const cookieParser = require('cookie-parser');
+const config = require("./config");
 //const bodyParser = require('body-parser'); 
 const mongoose = require('mongoose');
-const connectionString = 'mongodb+srv://cuatro:cuatro-admin@cuatro.k6i2p.mongodb.net/CUATRO?retryWrites=true&w=majority';   // Connection String for MongoDB Atlas
+const connectionString = config.MONGO_DB_CONN_STRING;   // Connection String for MongoDB Atlas
 var indexRoutes = require("./Routers/index");
 var authRoutes = require("./Routers/auth");
 var userRoutes = require("./Routers/users");
