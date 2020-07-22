@@ -11,6 +11,7 @@ var indexRoutes = require("./Routers/index");
 var authRoutes = require("./Routers/auth");
 var userRoutes = require("./Routers/users");
 var orderRoutes = require("./Routers/order");
+var musicRoutes = require("./Routers/music");
 
 /*
 mongoose.connection.on('connected', function() {
@@ -86,5 +87,6 @@ app.use('/', indexRoutes);
 app.use('/users/', userRoutes);
 app.use('/auth/', authRoutes);
 app.use('/order/', orderRoutes);
+app.use('/music/', musicRoutes);
 
 module.exports = app;
