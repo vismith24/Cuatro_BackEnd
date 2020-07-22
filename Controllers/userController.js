@@ -1,4 +1,3 @@
-//var authModel = require('../Schemas/auth');
 var profileModel = require('../Schemas/profile');
 
 exports.get_username = async (req, res) => {

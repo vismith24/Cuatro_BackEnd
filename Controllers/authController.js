@@ -14,7 +14,6 @@ var smtpTransport = nodemailer.createTransport({
     pass: "cuatroinc123",
   },
 });
-var authModel = require('../Schemas/auth');
 var oauthModel = require('../Schemas/oauth');
 var profileModel = require('../Schemas/profile');
 
