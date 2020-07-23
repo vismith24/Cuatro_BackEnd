@@ -43,6 +43,15 @@ var profileSchema = new mongoose.Schema({
             type: Date,
             default: Date.now
         }
+    }],
+    cart: [{
+        item: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Store'
+        },
+        date: {
+            type: Date,
+        }
     }]
 })
 
