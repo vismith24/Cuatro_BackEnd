@@ -44,6 +44,7 @@ exports.verify = async (req, res) => {
 
 exports.login = async (req, res) => {
     const { username, password } = req.body;
+    console.log(username, password);
     await profileModel.findOne({username: username, isVerified: true}, (err, result) => {
         if (err) {
             res.status(500).end();
@@ -70,7 +71,7 @@ exports.login = async (req, res) => {
         }
         else {
             console.log("not exist");
-            results.status(401).end();
+            res.status(401).end();
         }
     });
 }
