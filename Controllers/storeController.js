@@ -42,7 +42,7 @@ exports.get_store = async (req, res) => {
         })
     }
     else {
-        res.json({});
+        res.json({studios: [], instruments: []});
     }
 }
 
