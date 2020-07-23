@@ -15,7 +15,7 @@ exports.get_store = async (req, res) => {
             }
             user = result;
         });
-        await storeModel.find({'poster': {"$ne": user } }).populate(['poster', 'buyer', 'bookings.renter']).exec( (err, result) => {
+        await storeModel.find({'poster': {"$ne": user }, onStore: true }).populate(['poster', 'buyer', 'bookings.renter']).exec( (err, result) => {
             if (err) {
                 res.status(500).end();
                 throw err;
@@ -38,6 +38,7 @@ exports.get_store = async (req, res) => {
                     studios: studios,
                     instruments: instruments
                 });
+                console.log(studios, instruments);
             }
         })
     }
@@ -90,6 +91,7 @@ exports.buy_instrument = async (req, res) => {
         var token = req.headers.authorization.split(' ')[1];
         var payload = jwt.decode(token, "nodeauthsecret");
         var email = payload.email;
+        console.log(token, payload, email);
         var userID;
         var { itemID } = req.body;
         var items;
@@ -102,7 +104,7 @@ exports.buy_instrument = async (req, res) => {
             items = result.instrumentsBought;
         });
         var item;
-        await storeModel.findByIdAndUpdate(itemID, {buyer: userID}, (err, result) => {
+        await storeModel.findByIdAndUpdate(itemID, {buyer: userID, onStore: false}, (err, result) => {
             if (err) {
                 res.status(500).end();
                 throw err;
@@ -137,6 +139,7 @@ exports.rent_studio = async (req, res) => {
                 res.status(500).end();
                 throw err;
             }
+            console.log(result);
             userID = result._id;
             items = result.studiosRented;
         });
