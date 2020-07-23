@@ -13,16 +13,12 @@ router.get("/", async (req, res) => {
     var payload = jwt.decode(token, "nodeauthsecret");
     var email = payload.email;
     console.log(payload);
-    await profileModel.findOne({email: email}, (err, result) => {
+    await profileModel.findOne({email: email}).populate(['itemsPosted', 'studiosRented.studio', 'instrumentsBought.instrument']).exec( (err, result) => {
       if (err) {
         res.status(501).end();
         throw err;
       }
-      res.json({
-        username: result.username,
-        email: result.email,
-        picture: result.picture
-      })
+      res.json(result);
     })
   }
   else {
