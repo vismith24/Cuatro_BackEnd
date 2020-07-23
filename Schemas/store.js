@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+var Profile = require('./profile');
 
 var storeSchema = new mongoose.Schema({
     product: {
