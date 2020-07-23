@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+var Store = require('./store');
 
 var profileSchema = new mongoose.Schema({
     picture: {
@@ -19,7 +20,30 @@ var profileSchema = new mongoose.Schema({
     },
     password: {
         type: String
-    }
+    },
+    itemsPosted: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Store'
+    }],
+    studiosRented: [{
+        studio: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Store'
+        },
+        date: {
+            type: Date
+        }
+    }],
+    instrumentsBought: [{
+        instrument: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Store'
+        },
+        date: {
+            type: Date,
+            default: Date.now
+        }
+    }]
 })
 
 const Profile = mongoose.model("Profile", profileSchema);

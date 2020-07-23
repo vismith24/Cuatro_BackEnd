@@ -38,5 +38,12 @@ var storeSchema = new mongoose.Schema({
     onStore: {
         type: Boolean,
         default: true
+    },
+    datePosted: {
+        type: Date,
+        default: Date.now
     }
 })
+
+const Store = mongoose.model("Store", storeSchema);
+module.exports = Store;
