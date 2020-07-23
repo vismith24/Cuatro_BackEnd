@@ -1,4 +1,5 @@
 var profileModel = require('../Schemas/profile');
+const jwt = require('jsonwebtoken');
 
 exports.get_username = async (req, res) => {
     if (
@@ -64,4 +65,24 @@ exports.get_email = async (req, res) => {
               })
           }
       })
+}
+
+exports.get_profile = async (req, res) => {
+  if (req.headers.authorization) {
+    var token = req.headers.authorization.split(' ')[1];
+    var payload = jwt.decode(token, "nodeauthsecret");
+    var email = payload.email;
+    console.log(payload);
+    await profileModel.findOne({email: email}).populate(['itemsPosted', 'studiosRented.studio', 'instrumentsBought.instrument']).exec( (err, result) => {
+      if (err) {
+        res.status(501).end();
+        throw err;
+      }
+      res.json(result);
+      console.log(result);
+    })
+  }
+  else {
+    res.json({});
+  }
 }

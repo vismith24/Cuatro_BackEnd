@@ -7,6 +7,7 @@ var profileModel = require('../Schemas/profile');
 
 router.get('/username', userController.get_username);
 router.get('/email', userController.get_email);
+/*
 router.get("/", async (req, res) => {
   if (req.headers.authorization) {
     var token = req.headers.authorization.split(' ')[1];
@@ -25,5 +26,7 @@ router.get("/", async (req, res) => {
     res.json({});
   }
 });
+*/
+router.get("/", userController.get_profile);
 
 module.exports = router;
