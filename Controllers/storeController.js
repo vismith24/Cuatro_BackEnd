@@ -1,7 +1,6 @@
 var storeModel = require('../Schemas/store');
 var profileModel = require('../Schemas/profile');
 const jwt = require('jsonwebtoken');
-const moment = require('moment');
 
 exports.get_store = async (req, res) => {
     if (req.headers.authorization) {
@@ -92,37 +91,34 @@ exports.buy_instrument = async (req, res) => {
         var token = req.headers.authorization.split(' ')[1];
         var payload = jwt.decode(token, "nodeauthsecret");
         var email = payload.email;
+        console.log(token, payload, email);
         var userID;
         var { itemID } = req.body;
-        var items, cart = [];
-        await profileModel.findOne({email: email}, async (err, result) => {
+        var items;
+        await profileModel.findOne({email: email}, (err, result) => {
             if (err) {
                 res.status(500).end();
                 throw err;
             }
             userID = result._id;
             items = result.instrumentsBought;
-            cart = result.cart;
-            var updatedCart = cart.filter( (value, index, err) => {
-                return (value.item != itemID);
-            });
-            var item;
-            await storeModel.findByIdAndUpdate(itemID, {buyer: userID, onStore: false}, async (err, result) => {
-                if (err) {
-                    res.status(500).end();
-                    throw err;
-                }
-                item = {instrument: result._id};
-                items.push(item);
-                await profileModel.findByIdAndUpdate(userID, {instrumentsBought: items, cart: updatedCart}, (err, result) => {
-                    if (err) {
-                        res.status(500).end();
-                        throw err;
-                    }
-                });
-            });
-            res.json("Instrument Purchased");
         });
+        var item;
+        await storeModel.findByIdAndUpdate(itemID, {buyer: userID, onStore: false}, (err, result) => {
+            if (err) {
+                res.status(500).end();
+                throw err;
+            }
+            item = {instrument: result._id};
+        });
+        items.push(item);
+        await profileModel.findOneAndUpdate({email: email}, {instrumentsBought: items}, (err, result) => {
+            if (err) {
+                res.status(500).end();
+                throw err;
+            }
+        });
+        res.send("Instrument Purchased");
     }
     else {
         res.json({});
@@ -137,8 +133,8 @@ exports.rent_studio = async (req, res) => {
         var userID;
         var { itemID, date } = req.body;
         var dop = new Date(date);
-        var items, cart = [];
-        await profileModel.findOne({email: email}, async (err, result) => {
+        var items;
+        await profileModel.findOne({email: email}, (err, result) => {
             if (err) {
                 res.status(500).end();
                 throw err;
@@ -146,40 +142,33 @@ exports.rent_studio = async (req, res) => {
             console.log(result);
             userID = result._id;
             items = result.studiosRented;
-            cart = result.cart;
-            var updatedCart = cart.filter( (value, index, err) => {
-                var valDate = moment(value.date).format('YYYY-MM-DD');
-                console.log(value.item, itemID, valDate, date);
-                return (value.item != itemID) || (valDate != date);
-            });
-            var item;
-            var bookings;
-            await storeModel.findById(itemID, async (err, result) => {
-                if (err) {
-                    res.status(500).end();
-                    throw err;
-                }
-                bookings = result.bookings;
-                item = {studio: result._id, date: dop};
-                var studio = {date: dop, renter: userID};
-                bookings.push(studio);
-                await storeModel.findByIdAndUpdate(itemID, {bookings: bookings}, async (err, result) => {
-                    if (err) {
-                        res.status(500).end();
-                        throw err;
-                    }
-                        
-                    items.push(item);
-                    await profileModel.findByIdAndUpdate(userID, {studiosRented: items, cart: updatedCart}, (err, result) => {
-                        if (err) {
-                            res.status(500).end();
-                            throw err;
-                        }
-                    });
-                    res.json("Studio Rented");
-                });
-            })
         });
+        var item;
+        var bookings;
+        await storeModel.findById(itemID, (err, result) => {
+            if (err) {
+                res.status(500).end();
+                throw err;
+            }
+            bookings = result.bookings;
+            item = {studio: result._id, date: dop};
+        })
+        var studio = {date: dop, renter: userID};
+        bookings.push(studio);
+        await storeModel.findByIdAndUpdate(itemID, {bookings: bookings}, (err, result) => {
+            if (err) {
+                res.status(500).end();
+                throw err;
+            }
+        });
+        items.push(item);
+        await profileModel.findOneAndUpdate({email: email}, {studiosRented: items}, (err, result) => {
+            if (err) {
+                res.status(500).end();
+                throw err;
+            }
+        });
+        res.send("Instrument Purchased");
     }
     else {
         res.json({});
