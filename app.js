@@ -15,6 +15,7 @@ var orderRoutes = require("./Routers/order");
 var musicRoutes = require("./Routers/music");
 var storeRoutes = require('./Routers/store');
 var cartRoutes = require('./Routers/cart');
+var searchRoutes = require('./Routers/search');
 
 /*
 mongoose.connection.on('connected', function() {
@@ -93,5 +94,6 @@ app.use('/order/', orderRoutes);
 app.use('/music/', musicRoutes);
 app.use('/store/', storeRoutes);
 app.use('/cart', cartRoutes);
+app.use('/search', searchRoutes);
 
 module.exports = app;
