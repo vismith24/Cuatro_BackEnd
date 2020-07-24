@@ -15,8 +15,9 @@ const instance = new Razorpay({
 
 exports.createOrder = (req, res) => {
     try {
+        var { amount } = req.body;
         const options = {      
-            amount: 10 * 100, // amount == Rs 10
+            amount: amount * 100, // amount == Rs 10
             currency: "INR",
             receipt: "receipt#1",
             payment_capture: 0,
@@ -40,13 +41,14 @@ exports.createOrder = (req, res) => {
 }
 
 exports.capturePayment = (req, res) => {
-    try {    
+    try {
+        var amount = req.body.amount;    
         return request(
         {
             method: "POST",
             url: `https://${config.RAZOR_PAY_KEY_ID}:${config.RAZOR_PAY_KEY_SECRET}@api.razorpay.com/v1/payments/${req.params.paymentId}/capture`,
             form: {
-            amount: 10 * 100, // amount == Rs 10 // Same As Order amount
+            amount: amount * 100, // amount == Rs 10 // Same As Order amount
             currency: "INR",
             },
         },
@@ -62,6 +64,7 @@ exports.capturePayment = (req, res) => {
             console.log("Headers:", JSON.stringify(response.headers));
             // console.log("Response:", body);
             var orderDetails = JSON.parse(body);
+            orderDetails.amount /= 100;
             console.log("Response", orderDetails)
             var order = new orderModel(orderDetails)
             await order.save( error => {
