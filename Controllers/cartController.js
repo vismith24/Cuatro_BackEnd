@@ -80,6 +80,7 @@ exports.remove_from_cart = async (req, res) => {
         var email = payload.email;
         var itemID = req.body.itemID;
         var date;
+        console.log(req.body);
         if (req.body.date) {
             date = moment(new Date(req.body.date)).format('YYYY-MM-DD');
         }
@@ -100,6 +101,7 @@ exports.remove_from_cart = async (req, res) => {
             console.log(cart);
             var updatedCart = cart.filter( (value, index, err) => {
                 var valDate = moment(value.date).format('YYYY-MM-DD');
+                console.log(value.item, itemID, valDate, date);
                 return (value.item != itemID) || (valDate != date);
             });
             console.log(updatedCart);
