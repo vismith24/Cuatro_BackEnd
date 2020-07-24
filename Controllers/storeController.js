@@ -57,30 +57,30 @@ exports.add_item = async (req, res) => {
         var userID;
         var items;
         var { product, type, description, picture, price } = req.body;
-        await profileModel.findOne({email: email}, (err, result) => {
+        await profileModel.findOne({email: email}, async (err, result) => {
             if (err) {
                 res.status(500).end();
                 throw err;
             }
             userID = result._id;
             items = result.itemsPosted;
+            var Item = new storeModel({product, type, description, picture, price, poster: userID});
+            await Item.save((err) => {
+                if (err) {
+                    res.status(500).end();
+                    throw err;
+                }
+            });
+            var itemID = Item._id;
+            items.push(itemID);
+            await profileModel.findOneAndUpdate({email: email}, {itemsPosted: items}, (err, result) => {
+                if (err) {
+                    res.status(500).end();
+                    throw err;
+                }
+            })
+            res.send("Item Added");
         });
-        var Item = new storeModel({product, type, description, picture, price, poster: userID});
-        await Item.save((err) => {
-            if (err) {
-                res.status(500).end();
-                throw err;
-            }
-        });
-        var itemID = Item._id;
-        items.push(itemID);
-        await profileModel.findOneAndUpdate({email: email}, {itemsPosted: items}, (err, result) => {
-            if (err) {
-                res.status(500).end();
-                throw err;
-            }
-        })
-        res.send("Item Added");
     }
     else {
         res.json({});
