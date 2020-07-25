@@ -123,7 +123,7 @@ exports.buy_instrument = async (req, res) => {
                     }
                 });
                 });
-                res.send("Instrument Purchased");
+                res.json("Instrument Purchased");
             });
         }
     else {
@@ -177,7 +177,7 @@ exports.rent_studio = async (req, res) => {
                         throw err;
                     }
                 });
-                res.send("Instrument Purchased");
+                res.json("Studio Rented");
             });
         });
         });

@@ -15,7 +15,7 @@ exports.search_store = async (req, res) => {
                 throw err;
             }
             user = result._id;
-            await storeModel.find({$or: [{product: new RegExp(searchText, 'i')} , {description: new RegExp(searchText, 'i')}, {type: new RegExp('^' + searchText, 'i')}] , onStore: true}, (err, result) => {
+            await storeModel.find({$or: [{product: new RegExp(searchText, 'i')} , {description: new RegExp(searchText, 'i')}, {type: new RegExp('^' + searchText + '$', 'i')}] , onStore: true}, (err, result) => {
                 if (err) {
                     res.status(500).end();
                     throw err;
