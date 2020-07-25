@@ -42,7 +42,8 @@ exports.createOrder = (req, res) => {
 
 exports.capturePayment = (req, res) => {
     try {
-        var amount = req.body.amount;    
+        var amount = req.body.amount;
+        console.log(amount);    
         return request(
         {
             method: "POST",
