@@ -94,32 +94,37 @@ exports.buy_instrument = async (req, res) => {
         console.log(token, payload, email);
         var userID;
         var { itemID } = req.body;
-        var items;
-        await profileModel.findOne({email: email}, (err, result) => {
+        var items, cart= [];
+        await profileModel.findOne({email: email}, async(err, result) => {
             if (err) {
                 res.status(500).end();
                 throw err;
             }
             userID = result._id;
             items = result.instrumentsBought;
-        });
-        var item;
-        await storeModel.findByIdAndUpdate(itemID, {buyer: userID, onStore: false}, (err, result) => {
-            if (err) {
-                res.status(500).end();
-                throw err;
-            }
-            item = {instrument: result._id};
-        });
-        items.push(item);
-        await profileModel.findOneAndUpdate({email: email}, {instrumentsBought: items}, (err, result) => {
-            if (err) {
-                res.status(500).end();
-                throw err;
-            }
-        });
-        res.send("Instrument Purchased");
-    }
+            cart = result.cart;
+        
+            var item;
+            await storeModel.findByIdAndUpdate(itemID, {buyer: userID, onStore: false}, async(err, result) => {
+                if (err) {
+                    res.status(500).end();
+                    throw err;
+                }
+                item = {instrument: result._id};
+                items.push(item);
+                var updatedCart = cart.filter( (value, index, err) => {
+                    return (value.item != itemID);
+                });
+                await profileModel.findOneAndUpdate({email: email}, {instrumentsBought: items, cart: updatedCart}, (err, result) => {
+                    if (err) {
+                        res.status(500).end();
+                        throw err;
+                    }
+                });
+                });
+                res.send("Instrument Purchased");
+            });
+        }
     else {
         res.json({});
     }    
@@ -133,8 +138,8 @@ exports.rent_studio = async (req, res) => {
         var userID;
         var { itemID, date } = req.body;
         var dop = new Date(date);
-        var items;
-        await profileModel.findOne({email: email}, (err, result) => {
+        var items, cart = [];
+        await profileModel.findOne({email: email}, async(err, result) => {
             if (err) {
                 res.status(500).end();
                 throw err;
@@ -142,33 +147,39 @@ exports.rent_studio = async (req, res) => {
             console.log(result);
             userID = result._id;
             items = result.studiosRented;
+            cart = result.cart
+            var item;
+            var bookings;
+            await storeModel.findById(itemID, async (err, result) => {
+                if (err) {
+                    res.status(500).end();
+                    throw err;
+                }
+                bookings = result.bookings;
+                item = {studio: result._id, date: dop};
+                var studio = {date: dop, renter: userID};
+                bookings.push(studio);
+                await storeModel.findByIdAndUpdate(itemID, {bookings: bookings}, async (err, result) => {
+                    if (err) {
+                        res.status(500).end();
+                        throw err;
+                    }
+                items.push(item);
+                var updatedCart = cart.filter( (value, index, err) => {
+                    var valDate = moment(value.date).format('YYYY-MM-DD');
+                    console.log(value.item, itemID, valDate, date);
+                    return (value.item != itemID) || (valDate != date);
+                });
+                await profileModel.findOneAndUpdate({email: email}, {studiosRented: items, cart: updatedCart}, (err, result) => {
+                    if (err) {
+                        res.status(500).end();
+                        throw err;
+                    }
+                });
+                res.send("Instrument Purchased");
+            });
         });
-        var item;
-        var bookings;
-        await storeModel.findById(itemID, (err, result) => {
-            if (err) {
-                res.status(500).end();
-                throw err;
-            }
-            bookings = result.bookings;
-            item = {studio: result._id, date: dop};
-        })
-        var studio = {date: dop, renter: userID};
-        bookings.push(studio);
-        await storeModel.findByIdAndUpdate(itemID, {bookings: bookings}, (err, result) => {
-            if (err) {
-                res.status(500).end();
-                throw err;
-            }
         });
-        items.push(item);
-        await profileModel.findOneAndUpdate({email: email}, {studiosRented: items}, (err, result) => {
-            if (err) {
-                res.status(500).end();
-                throw err;
-            }
-        });
-        res.send("Instrument Purchased");
     }
     else {
         res.json({});
